@@ -1,10 +1,9 @@
 # i94-parser
----
 
 This is a simple parser for figuring out how many days you have stayed in the US per year. It takes data from the I94 history page. I wrote it mainly to help fill out Schedule OI - Other Information for the 1040NR tax form.
 
 ## Quick Start
-Clone and be in root directory project:
+Clone and be in root directory of project:
 ```
 ruby parser.rb demo.txt
 ```
@@ -18,7 +17,7 @@ OR
 ruby parser.rb file_path [--debug]
 ```
 
-file_path is input to data from the I94 history page. The section below explains the file format.
+file_path is the path to the file of data from the I94 history page. The section below explains the file format.
 
 ### Input file format
 The input file is a reverse chronological list of arrival and departure dates. The file should be formatted as such:
