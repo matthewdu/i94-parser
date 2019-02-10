@@ -103,21 +103,27 @@ def fixed_width_str(str, width)
   end
 end
 
+def fixed_width_string_row(strings)
+  strings.map { |s| "%-20.20s" % s }.join('')
+end
+
 def debug_stays(stays)
   # for fixed width fields
   field_length = 20
   stays.each do |stay|
-    arrival_date = stay.arrival.date.strftime("%Y-%m-%d")
-    departure_date = stay.departure.date.strftime("%Y-%m-%d")
+    arrival = stay.arrival
+    departure = stay.departure
     
-    puts fixed_width_str(arrival_date, field_length) + fixed_width_str(departure_date, field_length)
-    puts fixed_width_str(stay.arrival.type.to_s, field_length) + fixed_width_str(stay.departure.type.to_s, field_length) + "#{stay.duration} days"
-    puts fixed_width_str(stay.arrival.location, field_length) + fixed_width_str(stay.departure.location, field_length)
+    puts fixed_width_string_row([arrival.date.strftime("%Y-%m-%d"), departure.date.strftime("%Y-%m-%d")])
+    puts fixed_width_string_row([arrival.type.to_s, departure.type.to_s, "#{stay.duration} days"])
+    puts fixed_width_string_row([arrival.location, departure.location])
     puts ""
   end
 end
 
-def get_year_duration(filename, debug)
+def get_year_duration(filename, opts=nil)
+  opts = {debug: false} if opts.nil?
+
   travel_dates = read_travel_dates(filename).reverse
 
   # Adds a fake arrival date at the beginning of the year, if the first travel date for the year is a departure
@@ -128,7 +134,7 @@ def get_year_duration(filename, debug)
   end
 
   stays = create_stays(travel_dates)
-  debug_stays(stays) if debug
+  debug_stays(stays) if opts[:debug]
 
   # calculate number of days each year
   year_duration = Hash.new(0)
@@ -137,3 +143,24 @@ def get_year_duration(filename, debug)
   end
   year_duration
 end
+
+
+
+if __FILE__ == $0
+  require 'pp'
+  require_relative 'parser'
+
+
+  if ARGV.length == 0 || ARGV[0] == "-h" || ARGV[0] == "--help"
+    puts "Usage: #{$0} dates_file [--debug]"
+    exit
+  end
+
+  args = ARGV.select{ |arg| arg[0] != '-' }
+  raise ArgumentError.new("wrong number of arguments (#{args.length} for 1)") if args.length != 1
+
+  filename = args.first
+  
+  pp get_year_duration(filename, {debug: ARGV.include?("--debug")})
+end
+
