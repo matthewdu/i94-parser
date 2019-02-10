@@ -1,0 +1,8 @@
+1	
+2019-01-02
+Departure
+SFR
+2	
+2018-12-30
+Arrival
+SFR
